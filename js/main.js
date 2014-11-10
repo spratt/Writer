@@ -13,7 +13,7 @@ $(function() {
 
 	function achieve(threshold) {
 		var achievement = achievements[threshold];
-		console.log("Achievement: " + achievement.text);
+		toastr.success("Achievement: " + achievement.text);
 		achievement.got = true;
 	}
 
