@@ -21,11 +21,19 @@ $(function() {
 
 	var wordCount = 2;
 
+	function localWarn() {
+		toastr.error("Local storage is required to save.");
+	}
+
 	function init() {
 		tinyMCE.activeEditor.execCommand('mceFullScreen');
-		var saved = localStorage.getItem("file_" + filename);
-		if(saved !== null) {
-			tinyMCE.activeEditor.setContent(saved);
+		if (Modernizr.localstorage) {
+			var saved = localStorage.getItem("file_" + filename);
+			if(saved !== null) {
+				tinyMCE.activeEditor.setContent(saved);
+			}
+		} else {
+			localWarn();
 		}
 	}
 
@@ -45,7 +53,7 @@ $(function() {
 		if (Modernizr.localstorage) {
 			localStorage.setItem("file_" + filename, editor.save());
 		} else {
-			alert("Local storage is required to save.");
+			localWarn();
 		}
 	}
 
