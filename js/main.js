@@ -1,5 +1,13 @@
 $(function() {
 	var filename = "fix_me.html";
+
+	function init() {
+		tinyMCE.activeEditor.execCommand('mceFullScreen');
+		var saved = localStorage.getItem("file_" + filename);
+		if(saved !== null) {
+			tinyMCE.activeEditor.setContent(saved);
+		}
+	}
 	
 	function save(editor) {
 		if (Modernizr.localstorage) {
@@ -9,6 +17,7 @@ $(function() {
 		}
 	}
 
+	// tinyMCE configuration
 	tinymce.init({
 		selector: "textarea",
 		plugins: [
@@ -19,9 +28,7 @@ $(function() {
 		toolbar: "save | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
 		setup: function(editor) {
 			editor.on('init', function() {
-				setTimeout(function() {
-					tinyMCE.editors[0].execCommand('mceFullScreen');
-				},0);
+				setTimeout(init, 0);
 			});
 		},
 		save_enablewhendirty: true,
