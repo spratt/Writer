@@ -1,6 +1,26 @@
 $(function() {
 	var filename = "fix_me.html";
 
+	var achievements = {
+		3 : {text:'You wrote something!'},
+		100 : {text:'Flash Fiction'},
+		1000 : {text:'Short Story'},
+		7500 : {text:'Novelette'},
+		20000 : {text:'Novella'},
+		50000 : {text:'Novel'},
+		110000 : {text:'Epic'}
+	};
+
+	function achieve(threshold) {
+		var achievement = achievements[threshold];
+		console.log("Achievement: " + achievement.text);
+		achievement.got = true;
+	}
+
+	function hasAchievement(threshold) { return achievements[threshold].got; }
+
+	var wordCount = 2;
+
 	function init() {
 		tinyMCE.activeEditor.execCommand('mceFullScreen');
 		var saved = localStorage.getItem("file_" + filename);
@@ -8,7 +28,19 @@ $(function() {
 			tinyMCE.activeEditor.setContent(saved);
 		}
 	}
-	
+
+	function keyup() {
+		var before = wordCount;
+		wordCount = tinyMCE.activeEditor.plugins.wordcount.getCount();
+		Object.keys(achievements).forEach(function(threshold) {
+			if(wordCount >= threshold &&
+			   before < threshold &&
+			   !hasAchievement(threshold)) {
+				achieve(threshold);
+			}
+		});
+	}
+
 	function save(editor) {
 		if (Modernizr.localstorage) {
 			localStorage.setItem("file_" + filename, editor.save());
@@ -30,6 +62,7 @@ $(function() {
 			editor.on('init', function() {
 				setTimeout(init, 0);
 			});
+			editor.on('keyup', keyup);
 		},
 		save_enablewhendirty: true,
 		save_onsavecallback: save
